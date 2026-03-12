@@ -1,0 +1,41 @@
+.faq-section {
+  background: white;
+  color: black;
+  padding: 40px;
+  font-family: Arial, sans-serif;
+}
+
+.faq-title {
+  text-align: center;
+  font-size: 36px;
+  font-weight: bold;
+  margin-bottom: 30px;
+}
+
+.faq-item {
+  border-top: 1px solid #ddd;
+  padding: 18px 0;
+}
+
+.faq-question {
+  font-size: 20px;
+  font-weight: 600;
+  display: flex;
+  justify-content: space-between;
+  cursor: pointer;
+}
+
+.faq-answer {
+  margin-top: 10px;
+  font-size: 16px;
+  line-height: 1.6;
+  color: #333;
+}
+
+.arrow {
+  transition: transform 0.3s ease;
+}
+
+.rotate {
+  transform: rotate(180deg);
+}
