@@ -18,7 +18,7 @@ const SECTION_ALIASES = {
   summary: ["summary", "profile", "objective"],
 };
 
-// Skill keywords for extraction
+
 const SKILL_KEYWORDS = [
   "javascript",
   "typescript",
@@ -90,7 +90,7 @@ const extractSection = (text, sectionKey) => {
 
   const currentIdx = matches.indexOf(current);
   const start = current.index + current.heading.length;
-  // ...existing code...
+  
   const corpus = section || text;
   const lower = corpus.toLowerCase();
 
@@ -271,7 +271,7 @@ const computeAtsScore = ({
   })();
 
   const spellingIssues = (() => {
-    const common = ["teh", "recieve", "definately", "seperated", "occured"];
+    const common = ["teh", "recieve", "definately", "seperated", "occured"]
     const lower = rawText.toLowerCase();
     const found = common.filter((w) => lower.includes(w));
     return found.length ? 1 : 0;
@@ -346,7 +346,7 @@ const computeAtsScore = ({
   };
 };
 
-// Main exported async function for resume parsing
+
 import { getCodeFeedback } from "./gemini.js";
 export const extractResumeData = async ({ filePath, mimeType }) => {
   let rawText = "";
@@ -369,7 +369,7 @@ export const extractResumeData = async ({ filePath, mimeType }) => {
     mimeType === "image/webp" ||
     mimeType === "image/tiff"
   ) {
-    // OCR for image files
+
     const {
       data: { text },
     } = await Tesseract.recognize(filePath, "eng");
@@ -388,12 +388,12 @@ export const extractResumeData = async ({ filePath, mimeType }) => {
     education: extractEducation(normalized),
   };
 
-  // Use Gemini API for ATS score and feedback
+  
   let geminiFeedback = "";
   let geminiScore = null;
   let algoScore = computeAtsScore({ ...parsed, rawText: normalized }).score;
   try {
-    // Improved prompt for realism and actionable feedback
+    
     const prompt = `You are an expert ATS resume reviewer. Carefully analyze the resume below and provide:
 1. A realistic ATS score (0-100) based on section coverage, skills, formatting, and overall quality.
 2. Actionable feedback for improvement.
@@ -406,7 +406,7 @@ ATS Score: <number>
 Reason: <short reasoning>
 Feedback: <suggestions>`;
     geminiFeedback = await getCodeFeedback(prompt, "resume");
-    // Extract Gemini score
+    
     const scoreMatch = geminiFeedback.match(/ATS Score\s*[:\-]?\s*(\d{1,3})/i);
     if (scoreMatch) {
       geminiScore = Math.max(0, Math.min(100, parseInt(scoreMatch[1])));
@@ -415,10 +415,10 @@ Feedback: <suggestions>`;
     geminiFeedback = "Gemini feedback unavailable.";
   }
 
-  // Combine Gemini and algorithmic scores for realism
+  
   let finalScore;
   if (geminiScore !== null) {
-    // Weighted average: 60% Gemini, 40% algorithmic
+    
     finalScore = Math.round(geminiScore * 0.6 + algoScore * 0.4);
   } else {
     finalScore = algoScore;
