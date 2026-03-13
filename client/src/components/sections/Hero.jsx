@@ -58,21 +58,21 @@ const Hero = () => {
 
       {/* Floating insight cards */}
       {/* Score badge */}
-      <motion.div animate={{ y: [0, -10, 0] }} transition={{ duration: 4.5, repeat: Infinity }}
+      {/* <motion.div animate={{ y: [0, -10, 0] }} transition={{ duration: 4.5, repeat: Infinity }}
         className="absolute hidden lg:flex items-center gap-2.5 px-4 py-2.5 rounded-2xl top-[24%] left-[6%]"
         style={{ background: "rgba(12,14,21,0.85)", border: "1px solid rgba(59,130,246,0.25)", backdropFilter: "blur(16px)" }}>
-        <div className="relative w-2 h-2">
-          <span className="absolute inset-0 rounded-full animate-ping" style={{ background: "rgba(34,197,94,0.6)" }} />
+        <div className="relative w-2 h-2"> */}
+          {/* <span className="absolute inset-0 rounded-full animate-ping" style={{ background: "rgba(34,197,94,0.6)" }} />
           <span className="relative block w-2 h-2 rounded-full bg-emerald-400" />
         </div>
-        <span className="text-xs font-bold" style={{ color: "#94a3b8" }}>ATS Score <span className="text-white font-black">94</span>/100</span>
-      </motion.div>
+        <span className="text-xs font-bold" style={{ color: "#94a3b8" }}>ATS Score <span className="text-white font-black">94</span>/100</span> */}
+      {/* </motion.div> */}
 
       {/* Keywords card */}
-      <motion.div animate={{ y: [0, -8, 0] }} transition={{ duration: 5, repeat: Infinity, delay: 1.2 }}
+      {/* <motion.div animate={{ y: [0, -8, 0] }} transition={{ duration: 5, repeat: Infinity, delay: 1.2 }}
         className="absolute hidden lg:flex flex-col gap-2 px-4 py-3 rounded-2xl top-[18%] right-[7%]"
         style={{ background: "rgba(12,14,21,0.85)", border: "1px solid rgba(255,255,255,0.08)", backdropFilter: "blur(16px)" }}>
-        <span className="text-[9px] font-black uppercase tracking-widest" style={{ color: "#475569" }}>AI Detected Keywords</span>
+        <span className="text-[9px] font-black uppercase tracking-widest" style={{ color: "#475569" }}>AI Detected Keyword</span>
         <div className="flex gap-1.5 flex-wrap max-w-40">
           {["Python", "React", "AWS", "CI/CD"].map(k => (
             <span key={k} className="text-[10px] px-2 py-0.5 rounded-full font-bold" style={{ background: "rgba(37,99,235,0.15)", border: "1px solid rgba(59,130,246,0.25)", color: "#93c5fd" }}>{k}</span>
@@ -80,7 +80,7 @@ const Hero = () => {
         </div>
       </motion.div>
 
-      {/* Chart card */}
+      {/* Chart card */}{/*}
       <motion.div animate={{ y: [0, -9, 0] }} transition={{ duration: 6, repeat: Infinity, delay: 0.6 }}
         className="absolute hidden lg:flex flex-col gap-2 px-4 py-3 rounded-2xl bottom-[30%] right-[5%]"
         style={{ background: "rgba(12,14,21,0.85)", border: "1px solid rgba(255,255,255,0.08)", backdropFilter: "blur(16px)" }}>
@@ -94,7 +94,7 @@ const Hero = () => {
         <span className="text-[10px] font-bold text-emerald-400">↑ 3.2× more callbacks</span>
       </motion.div>
 
-      {/* Cover letter badge */}
+      {/* Cover letter badge */}{/*}
       <motion.div animate={{ y: [0, -11, 0] }} transition={{ duration: 5.5, repeat: Infinity, delay: 2 }}
         className="absolute hidden lg:flex items-center gap-3 px-4 py-3 rounded-2xl bottom-[34%] left-[5%]"
         style={{ background: "rgba(12,14,21,0.85)", border: "1px solid rgba(245,158,11,0.2)", backdropFilter: "blur(16px)" }}>
@@ -103,7 +103,7 @@ const Hero = () => {
           <p className="text-[9px] font-black uppercase tracking-widest" style={{ color: "#475569" }}>Cover Letter</p>
           <p className="text-xs font-bold text-white">Generated in 4s</p>
         </div>
-      </motion.div>
+      </motion.div> */}
 
       {/* Main content */}
       <motion.div initial={{ opacity: 0, y: 28 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}

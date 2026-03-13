@@ -38,33 +38,25 @@ const Navbar = ({ displayName }) => (
         </span>
       </Link>
       <div className="flex items-center gap-5">
-        <div className="hidden md:flex gap-6">
-          <Link
-            to="/dashboard"
-            className="text-[10px] font-black uppercase tracking-widest transition-colors"
-            style={{ color: "#475569" }}
+        <div className="hidden md:flex gap-6 text-[10px] font-black uppercase tracking-widest transition-colors"
+        style={{ color: "#475569" }}
             onMouseEnter={(e) => (e.target.style.color = "#94a3b8")}
-            onMouseLeave={(e) => (e.target.style.color = "#475569")}
-          >
+            onMouseLeave={(e) => (e.target.style.color = "#475569")}>
+          <Link
+            to="/dashboard">
             Dashboard
           </Link>
           <Link
-            to="/my-resumes"
-            className="text-[10px] font-black uppercase tracking-widest transition-colors"
-            style={{ color: "#475569" }}
-            onMouseEnter={(e) => (e.target.style.color = "#94a3b8")}
-            onMouseLeave={(e) => (e.target.style.color = "#475569")}
-          >
+            to="/my-resumes">
             My Resumes
           </Link>
           <Link
-            to="/settings"
-            className="text-[10px] font-black uppercase tracking-widest transition-colors"
-            style={{ color: "#475569" }}
-            onMouseEnter={(e) => (e.target.style.color = "#94a3b8")}
-            onMouseLeave={(e) => (e.target.style.color = "#475569")}
-          >
+            to="/settings">
             Settings
+          </Link>
+          <Link
+            to="/">
+            Log Out
           </Link>
         </div>
       </div>
