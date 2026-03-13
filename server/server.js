@@ -1,7 +1,10 @@
-import express from "express";
-import "./config/passport.js";
-import mongoose from "mongoose";
 import dotenv from "dotenv";
+dotenv.config();
+
+import express from "express";
+import "./config/google.passport.js";
+import "./config/linkedin.passport.js";
+import mongoose from "mongoose";
 import cors from "cors";
 import path from "path";
 import bodyParser from "body-parser";
@@ -10,8 +13,6 @@ import passport from "passport";
 import authRoutes from "./routes/auth.routes.js";
 import resumeRoutes from "./routes/resume.routes.js";
 import paymentRoutes from "./routes/payment.routes.js";
-
-dotenv.config();
 
 const app = express();
 
@@ -52,4 +53,4 @@ mongoose
   .catch((err) => console.log("Mongo error:", err));
 
 const PORT = process.env.PORT || 5001;
-app.listen(PORT, () => console.log(`Server running on port ${PORT} 🚀`));
+app.listen(PORT, () => console.log(`http://localhost:${PORT} 🚀`));

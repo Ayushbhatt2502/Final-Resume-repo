@@ -1,0 +1,60 @@
+﻿[dotenv@17.3.1] injecting env (9) from .env -- tip: ΓÜÖ∩╕Å  specify custom .env file path with { path: '/custom/path/.env' }
+Initializing Passport with Google Strategy...
+GOOGLE_CLIENT_ID exists: true
+GOOGLE_CLIENT_SECRET exists: true
+GOOGLE_CALLBACK_URL: http://localhost:5001/api/auth/google/callback
+[dotenv@17.3.1] injecting env (0) from .env -- tip: ≡ƒöÉ prevent building .env in docker: https://dotenvx.com/prebuild
+node : C:\Users\Lenovo\
+Desktop\Codex-Conquer-P
+raneeth-Team\server\nod
+e_modules\razorpay\dist
+\razorpay.js:34
+At line:1 char:1
++ node server.js 2>&1 
+| Out-File -FilePath 
+error.txt -Encoding 
+utf8
++ ~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo     
+         : NotSpecifi  
+  ed: (C:\Users\Leno   
+ vo...\razorpay.js:    
+34:String) [], Rem    
+oteException
+    + FullyQualifiedEr 
+   rorId : NativeComm  
+  andError
+ 
+      throw new 
+Error('`key_id` or 
+`oauthToken` is 
+mandatory');
+            ^
+
+Error: `key_id` or 
+`oauthToken` is 
+mandatory
+    at new Razorpay (C:
+\Users\Lenovo\Desktop\C
+odex-Conquer-Praneeth-T
+eam\server\node_modules
+\razorpay\dist\razorpay
+.js:34:13)
+    at file:///C:/Users
+/Lenovo/Desktop/Codex-C
+onquer-Praneeth-Team/se
+rver/controllers/paymen
+t.controller.js:5:18
+    at ModuleJob.run (n
+ode:internal/modules/es
+m/module_job:343:25)
+    at async onImport.t
+racePromise.__proto__ (
+node:internal/modules/e
+sm/loader:665:26)
+    at async asyncRunEn
+tryPointWithESMLoader (
+node:internal/modules/r
+un_main:117:5)
+
+Node.js v22.21.0

@@ -8,16 +8,21 @@ const OAuthCallback = () => {
   useEffect(() => {
     const token = params.get("token");
     const userRaw = params.get("user");
+    console.log("OAuth Callback hit. Token exists:", !!token, "UserRaw exists:", !!userRaw);
     if (token && userRaw) {
       try {
         const user = JSON.parse(decodeURIComponent(userRaw));
+        console.log("Parsed User:", user);
         localStorage.setItem("token", token);
         localStorage.setItem("user", JSON.stringify(user));
+        console.log("Redirecting to /dashboard...");
         navigate("/dashboard", { replace: true });
-      } catch {
+      } catch (err) {
+        console.error("Parse failed:", err);
         navigate("/login?error=parse_failed", { replace: true });
       }
     } else {
+      console.warn("Missing token or userRaw in URL");
       navigate("/login?error=oauth_failed", { replace: true });
     }
   }, []);

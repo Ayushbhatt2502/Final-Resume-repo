@@ -41,9 +41,9 @@ const Hero = () => {
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden" style={{ background: "#07080c" }}>
       {/* Ambient lights */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-[-10%] left-[20%] w-[700px] h-[500px] rounded-full opacity-30"
+        <div className="absolute top-[-10%] left-[20%] w-175 h-125 rounded-full opacity-30"
           style={{ background: "radial-gradient(ellipse, rgba(37,99,235,0.25) 0%, transparent 70%)" }} />
-        <div className="absolute bottom-[-5%] right-[15%] w-[500px] h-[400px] rounded-full opacity-20"
+        <div className="absolute bottom-[-5%] right-[15%] w-125 h-100 rounded-full opacity-20"
           style={{ background: "radial-gradient(ellipse, rgba(245,158,11,0.2) 0%, transparent 70%)" }} />
         {/* Fine grid */}
         <div className="absolute inset-0 opacity-[0.03]"
@@ -73,7 +73,7 @@ const Hero = () => {
         className="absolute hidden lg:flex flex-col gap-2 px-4 py-3 rounded-2xl top-[18%] right-[7%]"
         style={{ background: "rgba(12,14,21,0.85)", border: "1px solid rgba(255,255,255,0.08)", backdropFilter: "blur(16px)" }}>
         <span className="text-[9px] font-black uppercase tracking-widest" style={{ color: "#475569" }}>AI Detected Keywords</span>
-        <div className="flex gap-1.5 flex-wrap max-w-[160px]">
+        <div className="flex gap-1.5 flex-wrap max-w-40">
           {["Python", "React", "AWS", "CI/CD"].map(k => (
             <span key={k} className="text-[10px] px-2 py-0.5 rounded-full font-bold" style={{ background: "rgba(37,99,235,0.15)", border: "1px solid rgba(59,130,246,0.25)", color: "#93c5fd" }}>{k}</span>
           ))}
@@ -108,16 +108,6 @@ const Hero = () => {
       {/* Main content */}
       <motion.div initial={{ opacity: 0, y: 28 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
         className="relative z-10 max-w-5xl mx-auto px-6 text-center">
-
-        <motion.div initial={{ opacity: 0, scale: 0.92 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.1 }}
-          className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full text-xs font-black uppercase tracking-widest mb-8"
-          style={{ background: "rgba(37,99,235,0.1)", border: "1px solid rgba(59,130,246,0.25)", color: "#93c5fd" }}>
-          <span className="relative flex h-1.5 w-1.5">
-            <span className="absolute inset-0 rounded-full animate-ping" style={{ background: "rgba(59,130,246,0.7)" }} />
-            <span className="relative block h-1.5 w-1.5 rounded-full bg-blue-400" />
-          </span>
-          AI-powered · Trusted by 10,000+ professionals
-        </motion.div>
 
         <motion.h1 initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.18, duration: 0.75 }}
           className="text-5xl sm:text-7xl md:text-[82px] font-black tracking-[-0.04em] leading-[1.02] mb-6 text-white">

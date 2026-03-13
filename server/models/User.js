@@ -31,7 +31,7 @@ const userSchema = new mongoose.Schema(
         issues: Number,
         content: Number,
         sections: Number,
-        essentials: Number,
+        essentials: Number,                                                      
         formatting: Number,
         tailoring: Number,
         breakdown: {

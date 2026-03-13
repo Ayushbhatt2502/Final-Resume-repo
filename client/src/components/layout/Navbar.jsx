@@ -23,11 +23,11 @@ const Navbar = () => {
       initial={{ y: -20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-      className="fixed top-0 w-full z-50 transition-all duration-500"
+      className="fixed top-0 w-full z-100 transition-all duration-500"
       style={{
-        background: scrolled ? "rgba(7,8,12,0.88)" : "transparent",
-        backdropFilter: scrolled ? "blur(20px)" : "none",
-        borderBottom: scrolled ? "1px solid rgba(255,255,255,0.06)" : "none",
+        background: scrolled ? "rgba(7,8,12,0.9)" : "rgba(7,8,12,0.45)",
+        backdropFilter: "blur(20px)",
+        borderBottom: scrolled ? "1px solid rgba(255,255,255,0.08)" : "1px solid rgba(255,255,255,0.04)",
       }}
     >
       <nav className="max-w-7xl mx-auto px-6 md:px-12 flex items-center justify-between py-4">
@@ -62,9 +62,9 @@ const Navbar = () => {
               <a
                 href={item.path}
                 className="text-sm font-semibold transition-colors duration-200"
-                style={{ color: "#64748b" }}
+                style={{ color: "#94a3b8" }}
                 onMouseEnter={(e) => (e.target.style.color = "#f1f5f9")}
-                onMouseLeave={(e) => (e.target.style.color = "#64748b")}
+                onMouseLeave={(e) => (e.target.style.color = "#94a3b8")}
               >
                 {item.title}
               </a>
@@ -76,9 +76,9 @@ const Navbar = () => {
           <Link
             to="/login"
             className="text-sm font-bold px-4 py-2 transition-colors"
-            style={{ color: "#64748b" }}
+            style={{ color: "#94a3b8" }}
             onMouseEnter={(e) => (e.target.style.color = "#f1f5f9")}
-            onMouseLeave={(e) => (e.target.style.color = "#64748b")}
+            onMouseLeave={(e) => (e.target.style.color = "#94a3b8")}
           >
             Log in
           </Link>
@@ -103,7 +103,7 @@ const Navbar = () => {
         {/* Mobile toggle */}
         <button
           className="md:hidden p-2"
-          style={{ color: "#64748b" }}
+          style={{ color: "#cbd5e1" }}
           onClick={() => setOpen(!open)}
         >
           <div className="w-6 h-4 flex flex-col justify-between">

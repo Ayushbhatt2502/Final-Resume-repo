@@ -34,6 +34,7 @@ const oauthSuccess = (req, res) => {
   } catch (err) {
     const clientUrl = process.env.CLIENT_URL || "http://localhost:5173";
     res.redirect(`${clientUrl}/login?error=oauth_failed`);
+    console.error("OAuth Success processing error:", err);
   }
 };
 
