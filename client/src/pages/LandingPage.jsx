@@ -181,7 +181,8 @@ const Pricing = () => {
                   <div className="flex items-baseline gap-1 mb-2">
                     <span className="text-4xl font-black text-white">
                       {p.price}
-                    </span>
+</span>
+                    
                     <span className="text-sm" style={{ color: "#475569" }}>
                       {p.period}
                     </span>

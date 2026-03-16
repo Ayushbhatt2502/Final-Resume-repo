@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import axios from "axios";
+
 
 const loadRazorpayScript = () =>
   new Promise((resolve) => {
@@ -16,7 +17,7 @@ const loadRazorpayScript = () =>
 const PLAN_INFO = {
   basic: {
     name: "Basic",
-    price: "₹249",
+    price: 2.99,
     period: "/month",
     color: "#3b82f6",
     gradient: "linear-gradient(135deg, #1d4ed8, #2563eb)",
@@ -30,7 +31,7 @@ const PLAN_INFO = {
   },
   pro: {
     name: "Pro",
-    price: "₹579",
+    price: 6.99,
     period: "/month",
     color: "#f59e0b",
     gradient: "linear-gradient(135deg, #d97706, #f59e0b)",
@@ -117,6 +118,47 @@ const PaymentModal = ({ plan, onClose, onSuccess }) => {
   const [selectedMode, setSelectedMode] = useState(null);
   const [loading, setLoading] = useState(false);
   const p = PLAN_INFO[plan] || PLAN_INFO.basic;
+  const [rate, setRate] = useState(null);
+  const [currency, setCurrency] = useState(null);
+  const convertedPrice =
+  currency && rate !== null
+    ? Number((p.price * rate).toFixed(2))
+    : null;
+
+  useEffect(() => {
+  async function detectCurrency() {
+    try {
+      const res = await fetch("https://ipapi.co/json/");
+      const data = await res.json();
+      setCurrency(data.currency || "USD");
+    } catch {
+      setCurrency("USD");
+    }
+  }
+
+  detectCurrency();
+}, []);
+
+      useEffect(() => {
+  if (!currency) return;
+
+  async function loadRate() {
+    try {
+      const res = await fetch("https://api.exchangerate-api.com/v4/latest/USD");
+      const data = await res.json();
+
+      if (currency === "USD") {
+        setRate(1);
+      } else {
+        setRate(data.rates[currency] || 1);
+      }
+    } catch {
+      console.error("Currency conversion failed");
+    }
+  }
+
+  loadRate();
+}, [currency]);
 
   const handlePay = async () => {
     if (!selectedMode) return;
@@ -137,7 +179,7 @@ const PaymentModal = ({ plan, onClose, onSuccess }) => {
       const apiUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:5001";
       const { data } = await axios.post(
         `${apiUrl}/api/payment/create-order`,
-        { plan },
+        { plan, currency },
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
@@ -151,7 +193,7 @@ const PaymentModal = ({ plan, onClose, onSuccess }) => {
         image: "/vite.svg",
         order_id: data.orderId,
         method: mode?.rzpMethod,
-        ...(mode?.upiQr ? { "_[flow]": "qr" } : {}),
+        ...(mode?.upiQr ? { flow: "qr" } : {}),
         handler: async (response) => {
           try {
             const verifyRes = await axios.post(
@@ -228,7 +270,14 @@ const PaymentModal = ({ plan, onClose, onSuccess }) => {
             Upgrade to {p.name}
           </p>
           <div className="flex items-baseline gap-1">
-            <span className="text-4xl font-black text-white">{p.price}</span>
+            {convertedPrice !== null && currency && (
+  <span className="text-4xl font-black text-white">
+    {new Intl.NumberFormat(undefined, {
+      style: "currency",
+      currency: currency,
+    }).format(convertedPrice)}
+  </span>
+)}
             <span className="text-sm" style={{ color: "#475569" }}>{p.period}</span>
           </div>
           <ul className="mt-3 flex flex-wrap gap-x-4 gap-y-1">
@@ -298,7 +347,10 @@ const PaymentModal = ({ plan, onClose, onSuccess }) => {
             {loading
               ? "Processing..."
               : selectedMode
-              ? `Pay ${p.price} via ${PAYMENT_MODES.find((m) => m.id === selectedMode)?.label}`
+              ? `Pay ${new Intl.NumberFormat(undefined,{
+  style:"currency",
+  currency: currency || "USD"
+}).format(convertedPrice)} via ${PAYMENT_MODES.find((m)=>m.id===selectedMode)?.label}`
               : "Select a Payment Method"}
           </button>
           <p className="text-center text-[10px] mt-3" style={{ color: "#334155" }}>
