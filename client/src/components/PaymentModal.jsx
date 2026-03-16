@@ -120,47 +120,40 @@ const PaymentModal = ({ plan, onClose, onSuccess }) => {
   const p = PLAN_INFO[plan] || PLAN_INFO.basic;
   const [rate, setRate] = useState(null);
   const [currency, setCurrency] = useState(null);
+  const FX_KEY = "fxCache_v1";
+  const FX_TTL_MS = 6 * 60 * 60 * 1000; // 6 hours
   const convertedPrice =
   currency && rate !== null
     ? Number((p.price * rate).toFixed(2))
     : null;
 
   useEffect(() => {
-  async function detectCurrency() {
-    try {
-      const res = await fetch("https://ipapi.co/json/");
-      const data = await res.json();
-      setCurrency(data.currency || "USD");
-    } catch {
-      setCurrency("USD");
+    const cached = JSON.parse(sessionStorage.getItem(FX_KEY) || "null");
+    if (cached && Date.now() - cached.t < FX_TTL_MS) {
+      setCurrency(cached.c);
+      setRate(cached.r);
+      return;
     }
-  }
-
-  detectCurrency();
-}, []);
-
-      useEffect(() => {
-  if (!currency) return;
-
-  async function loadRate() {
-    try {
-      const res = await fetch("https://api.exchangerate-api.com/v4/latest/USD");
-      const data = await res.json();
-
-      if (currency === "USD") {
+    (async () => {
+      try {
+        const ipRes = await fetch("https://ipapi.co/json/");
+        const ipData = await ipRes.json();
+        const cur = ipData.currency || "USD";
+        const fxRes = await fetch("https://api.exchangerate-api.com/v4/latest/USD");
+        const fxData = await fxRes.json();
+        const r = cur === "USD" ? 1 : fxData.rates[cur] || 1;
+        setCurrency(cur);
+        setRate(r);
+        sessionStorage.setItem(FX_KEY, JSON.stringify({ c: cur, r, t: Date.now() }));
+      } catch {
+        setCurrency("USD");
         setRate(1);
-      } else {
-        setRate(data.rates[currency] || 1);
       }
-    } catch {
-      console.error("Currency conversion failed");
-    }
-  }
-
-  loadRate();
-}, [currency]);
+    })();
+  }, []);
 
   const handlePay = async () => {
+    if (loading) return;
     if (!selectedMode) return;
     const token = localStorage.getItem("token");
     if (!token) {
