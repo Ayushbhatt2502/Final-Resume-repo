@@ -120,8 +120,9 @@ const PaymentModal = ({ plan, onClose, onSuccess }) => {
   const p = PLAN_INFO[plan] || PLAN_INFO.basic;
   const [rate, setRate] = useState(null);
   const [currency, setCurrency] = useState(null);
-  const FX_KEY = "fxCache_v1";
+  const FX_KEY = "fxCache_ipapi_v1";
   const FX_TTL_MS = 6 * 60 * 60 * 1000; // 6 hours
+  const FX_COOLDOWN_MS = 2 * 60 * 1000; // 2 min cooldown if ipapi rate-limits
   const convertedPrice =
   currency && rate !== null
     ? Number((p.price * rate).toFixed(2))
@@ -136,6 +137,13 @@ const PaymentModal = ({ plan, onClose, onSuccess }) => {
     }
     (async () => {
       try {
+        const lastAttempt = Number(sessionStorage.getItem(`${FX_KEY}_lastAttempt`) || "0");
+        if (lastAttempt && Date.now() - lastAttempt < FX_COOLDOWN_MS) {
+          setCurrency("USD");
+          setRate(1);
+          return;
+        }
+        sessionStorage.setItem(`${FX_KEY}_lastAttempt`, String(Date.now()));
         const ipRes = await fetch("https://ipapi.co/json/");
         const ipData = await ipRes.json();
         const cur = ipData.currency || "USD";

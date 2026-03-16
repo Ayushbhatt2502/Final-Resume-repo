@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/layout/Navbar";
@@ -14,6 +14,11 @@ import PaymentModal from "../components/PaymentModal";
 const Pricing = () => {
   const navigate = useNavigate();
   const [paymentPlan, setPaymentPlan] = useState(null);
+  const [currency, setCurrency] = useState(null);
+  const [rate, setRate] = useState(null);
+  const FX_KEY = "fxCache_ipapi_v1";
+  const FX_TTL_MS = 6 * 60 * 60 * 1000; // 6 hours
+  const FX_COOLDOWN_MS = 2 * 60 * 1000; // 2 min cooldown if ipapi rate-limits
   const plans = [
     {
       name: "Free",
@@ -94,6 +99,40 @@ const Pricing = () => {
       badge: { label: "Best Value", bg: "rgba(217,119,6,0.9)" },
     },
   ];
+
+  useEffect(() => {
+    const cached = JSON.parse(sessionStorage.getItem(FX_KEY) || "null");
+    if (cached && Date.now() - cached.t < FX_TTL_MS) {
+      setCurrency(cached.c);
+      setRate(cached.r);
+      return;
+    }
+
+    const lastAttempt = Number(sessionStorage.getItem(`${FX_KEY}_lastAttempt`) || "0");
+    if (lastAttempt && Date.now() - lastAttempt < FX_COOLDOWN_MS) {
+      setCurrency("USD");
+      setRate(1);
+      return;
+    }
+
+    (async () => {
+      try {
+        sessionStorage.setItem(`${FX_KEY}_lastAttempt`, String(Date.now()));
+        const ipRes = await fetch("https://ipapi.co/json/");
+        const ipData = await ipRes.json();
+        const cur = ipData.currency || "USD";
+        const fxRes = await fetch("https://api.exchangerate-api.com/v4/latest/USD");
+        const fxData = await fxRes.json();
+        const r = cur === "USD" ? 1 : fxData.rates[cur] || 1;
+        setCurrency(cur);
+        setRate(r);
+        sessionStorage.setItem(FX_KEY, JSON.stringify({ c: cur, r, t: Date.now() }));
+      } catch {
+        setCurrency("USD");
+        setRate(1);
+      }
+    })();
+  }, []);
 
   return (
     <section
@@ -180,9 +219,19 @@ const Pricing = () => {
                   </p>
                   <div className="flex items-baseline gap-1 mb-2">
                     <span className="text-4xl font-black text-white">
-                      {p.price}
-</span>
-                    
+                      {p.name === "Free" || !currency || rate === null
+                        ? p.price
+                        : new Intl.NumberFormat(undefined, {
+                            style: "currency",
+                            currency,
+                          }).format(
+                            p.name === "Basic"
+                              ? 2.99 * rate
+                              : p.name === "Pro"
+                              ? 6.99 * rate
+                              : 0
+                          )}
+                    </span>
                     <span className="text-sm" style={{ color: "#475569" }}>
                       {p.period}
                     </span>
