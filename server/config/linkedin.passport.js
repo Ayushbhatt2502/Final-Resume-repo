@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import User from "../models/User.js";
 
 dotenv.config();
+console.log("LINKEDIN_CALLBACK_URL exists:", !!process.env.LINKEDIN_CALLBACK_URL);
 
 passport.use(
     new LinkedInStrategy(

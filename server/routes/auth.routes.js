@@ -24,6 +24,7 @@ const oauthSuccess = (req, res) => {
     });
     const userResponse = user.toObject ? user.toObject() : { ...user };
     delete userResponse.password;
+    delete userResponse.resumeParsed;
 
     const clientUrl = process.env.CLIENT_URL || "http://localhost:5173";
     const encoded = encodeURIComponent(JSON.stringify(userResponse));
@@ -45,7 +46,16 @@ router.get(
 );
 router.get(
   "/google/callback",
-  passport.authenticate("google", { failureRedirect: "/login", session: false }),
+  (req, res, next) => {
+    passport.authenticate("google", { session: false }, (err, user, info) => {
+      if (err || !user) {
+        const clientUrl = process.env.CLIENT_URL || "http://localhost:3000";
+        return res.redirect(`${clientUrl}/login?error=oauth_failed`);
+      }
+      req.user = user;
+      next();
+    })(req, res, next);
+  },
   oauthSuccess
 );
 
@@ -56,10 +66,16 @@ router.get(
 );
 router.get(
   "/linkedin/callback",
-  passport.authenticate("linkedin", {
-    failureRedirect: "/login",
-    session: false,
-  }),
+  (req, res, next) => {
+    passport.authenticate("linkedin", { session: false }, (err, user, info) => {
+      if (err || !user) {
+        const clientUrl = process.env.CLIENT_URL || "http://localhost:3000";
+        return res.redirect(`${clientUrl}/login?error=oauth_failed`);
+      }
+      req.user = user;
+      next();
+    })(req, res, next);
+  },
   oauthSuccess
 );
 
