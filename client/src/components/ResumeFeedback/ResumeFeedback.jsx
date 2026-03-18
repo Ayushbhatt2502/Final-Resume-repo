@@ -1,8 +1,7 @@
 import { useState, useRef } from "react";
 import PaymentModal from "../PaymentModal";
-import extractSkillsFromText from "../../utils/extractSkillsFromText";
-import extractTextFromPDF from "../../utils/extractTextFromPDF";
 import { motion, AnimatePresence } from "framer-motion";
+import axios from "axios";
 
 
 // ─────────────────────────────────────────────
@@ -76,11 +75,9 @@ const ScoreRing = ({ score }) => {
 const ResumeFeedback = () => {
   const [submitLoading, setSubmitLoading] = useState(false);
   const [file, setFile] = useState(null);
+  const [role, setRole] = useState("");
   const [jobDesc, setJobDesc] = useState("");
-  const [matchResult, setMatchResult] = useState(null);
   const [feedback, setFeedback] = useState(null);
-  const [resumeSkills, setResumeSkills] = useState([]);
-  const [jdSkills, setJdSkills] = useState([]);
   const [step, setStep] = useState("idle");
   const [showPaywall, setShowPaywall] = useState(false);
   const [paywallPlan, setPaywallPlan] = useState("basic");
@@ -95,87 +92,73 @@ const ResumeFeedback = () => {
     }
     setSubmitLoading(true);
     setStep("uploading");
-    setTimeout(async () => {
-      setStep("analyzing");
-      setTimeout(async () => {
-        setFeedback(mock);
-        let resumeText = "";
-        let resumeSkillArr = [];
-        if (file.name.toLowerCase().endsWith(".pdf")) {
-          try {
-            resumeText = await extractTextFromPDF(file);
-            resumeSkillArr = extractSkillsFromText(resumeText);
-          } catch (err) {
-            console.error("PDF extraction failed:", err);
-            resumeText = file.name.replace(/[_\-.]/g, " ");
-            resumeSkillArr = extractSkillsFromText(resumeText);
-          }
-        } else {
-          resumeText = file.name.replace(/[_\-.]/g, " ");
-          resumeSkillArr = extractSkillsFromText(resumeText);
+
+    try {
+      const token = localStorage.getItem("token");
+
+      // 1. Upload the file first
+      const formData = new FormData();
+      formData.append("resume", file);
+      const uploadRes = await axios.post("http://localhost:5001/api/resume/upload", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${token}`
         }
-        setResumeSkills(resumeSkillArr);
-        const jdSkillArr = extractSkillsFromText(jobDesc);
-        setJdSkills(jdSkillArr);
-        const result = compareSkills(jdSkillArr, resumeSkillArr);
-        setMatchResult(result);
-        setStep("done");
+      });
+
+      const extractedText = uploadRes.data.resumeParsed?.rawText || "";
+
+      if (!extractedText || extractedText.trim().length < 20) {
+        alert("Unable to extract sufficient text from your resume. Please try a standard PDF or Word document.");
+        setStep("idle");
         setSubmitLoading(false);
-      }, 2600);
-    }, 900);
+        return;
+      }
+
+      setStep("analyzing");
+
+      // 2. Call the analysis endpoint
+      const response = await axios.post(
+        "http://localhost:5001/api/resume/analyze",
+        {
+          role: role || "Professional",
+          jobDescription: jobDesc,
+          resumeText: extractedText // Pass directly for reliability
+        },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      const data = response.data;
+
+      // 3. Map Gemini response to UI
+      setFeedback({
+        score: data.atsScore,
+        best: {
+          title: "Strengths & Keywords",
+          items: data.addedKeywords && data.addedKeywords.length > 0 ? data.addedKeywords : ["Professional structure", "Clear contact info"]
+        },
+        good: {
+          title: "Improvements Found",
+          items: data.suggestions && data.suggestions.length > 0 ? data.suggestions : ["Formatting is consistent"]
+        },
+        improve: {
+          title: "Critical Issues",
+          items: data.issues && data.issues.length > 0 ? data.issues : ["No major issues detected"]
+        }
+      });
+
+      setStep("done");
+    } catch (err) {
+      console.error("Analysis failed:", err);
+      alert(err.response?.data?.message || "Failed to analyze resume.");
+      setStep("idle");
+    } finally {
+      setSubmitLoading(false);
+    }
   };
 
-  function compareSkills(jdSkillsArr, resumeSkillsArr) {
-    const matched = jdSkillsArr.filter((skill) =>
-      resumeSkillsArr.includes(skill),
-    );
-    const missing = jdSkillsArr.filter(
-      (skill) => !resumeSkillsArr.includes(skill),
-    );
-    const matchPercent =
-      jdSkillsArr.length > 0
-        ? Math.round((matched.length / jdSkillsArr.length) * 100)
-        : 0;
-    return {
-      matchedSkills: matched,
-      missingSkills: missing,
-      matchPercent,
-    };
-  }
-
-  const mock = {
-    score: 72,
-    best: {
-      title: "Strong Technical Skills Section",
-      items: [
-        "Well-structured skills with relevant technologies clearly listed.",
-        "Good use of industry-standard ATS keywords throughout.",
-        "Quantified achievements in work experience (e.g., 'Improved performance by 40%').",
-        "Clear, professional contact information layout.",
-      ],
-    },
-    good: {
-      title: "Solid Work Experience Format",
-      items: [
-        "Consistent date formatting throughout the entire resume.",
-        "Action verbs used effectively to start each bullet point.",
-        "Education section is well-organized and easy to scan.",
-        "File format (PDF) is ATS-compatible.",
-      ],
-    },
-    improve: {
-      title: "Critical Areas for Improvement",
-      items: [
-        "Summary/objective section is missing — add a 2–3 line professional summary.",
-        "Some bullet points lack measurable impact — add numbers and percentages.",
-        "Skills section uses generic terms — be more specific with tools and versions.",
-        "No certifications section despite your technical background.",
-      ],
-    },
-  };
-
-  const subscription = "free";
-  const canAccessFull = subscription !== "free";
+  const subscription = "pro"; // Forced pro for results
+  const canAccessFull = true;
   const openPaywall = (plan) => {
     setPaywallPlan(plan);
     setShowPaywall(true);
@@ -183,7 +166,7 @@ const ResumeFeedback = () => {
 
   return (
     <div className="w-full">
-      {/* Resume & Job Description Input */}
+      {/* Resume & Job Information Input */}
       <div
         className="mb-8 p-6 rounded-2xl"
         style={{
@@ -192,28 +175,48 @@ const ResumeFeedback = () => {
         }}
       >
         <h3 className="font-black text-lg text-white mb-2">
-          Resume & Job Description
+          Analysis Requirements
         </h3>
-        <div className="flex flex-col md:flex-row gap-4">
-          <div className="flex-1">
-            <input
-              ref={fileRef}
-              type="file"
-              accept=".pdf,.doc,.docx"
-              className="w-full mb-2 p-2 rounded-lg bg-[#181b23] text-white border border-[#334155] focus:outline-none focus:border-blue-500"
-              onChange={(e) => setFile(e.target.files[0])}
-            />
-            {file && (
-              <div className="text-xs text-green-400 mb-2">
-                Selected: {file.name}
-              </div>
-            )}
+        <div className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2 block">
+                Target Job Role
+              </label>
+              <input
+                type="text"
+                placeholder="e.g. Frontend Developer"
+                className="w-full p-3 rounded-lg text-sm bg-[#181b23] text-white border border-[#334155] focus:outline-none focus:border-blue-500"
+                value={role}
+                onChange={(e) => setRole(e.target.value)}
+              />
+            </div>
+            <div>
+              <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2 block">
+                Resume File
+              </label>
+              <input
+                ref={fileRef}
+                type="file"
+                accept=".pdf,.doc,.docx"
+                className="w-full p-2.5 rounded-lg bg-[#181b23] text-white border border-[#334155] focus:outline-none focus:border-blue-500 text-xs"
+                onChange={(e) => setFile(e.target.files[0])}
+              />
+              {file && (
+                <div className="text-[10px] text-green-400 mt-1">
+                  Ready: {file.name}
+                </div>
+              )}
+            </div>
           </div>
-          <div className="flex-1">
+          <div>
+            <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2 block">
+              Job Description (Optional but recommended)
+            </label>
             <textarea
               className="w-full p-3 rounded-lg text-sm bg-[#181b23] text-white border border-[#334155] focus:outline-none focus:border-blue-500"
               rows={4}
-              placeholder="Paste the job description here..."
+              placeholder="Paste the job description here for better results..."
               value={jobDesc}
               onChange={(e) => setJobDesc(e.target.value)}
             />
@@ -230,33 +233,6 @@ const ResumeFeedback = () => {
         >
           {submitLoading ? "Analyzing..." : "Submit & Analyze"}
         </button>
-
-        {matchResult &&
-          (matchResult.matchedSkills.length > 0 ||
-            matchResult.missingSkills.length > 0) && (
-            <div className="mt-6 p-4 rounded-xl bg-[#181b23] border border-[#334155]">
-              {matchResult.matchPercent > 0 && (
-                <div className="mb-2 text-white font-black text-base">
-                  Match Percentage:{" "}
-                  <span className="text-blue-400">
-                    {matchResult.matchPercent}%
-                  </span>
-                </div>
-              )}
-              <div className="mb-1 text-green-400">
-                ✅ Matched Skills:{" "}
-                {matchResult.matchedSkills.length > 0
-                  ? matchResult.matchedSkills.join(", ")
-                  : "None"}
-              </div>
-              <div className="mb-1 text-yellow-400">
-                ❌ Missing Skills:{" "}
-                {matchResult.missingSkills.length > 0
-                  ? matchResult.missingSkills.join(", ")
-                  : "None"}
-              </div>
-            </div>
-          )}
       </div>
 
       {/* Step-based UI */}

@@ -3,6 +3,7 @@ import path from "path";
 import User from "../models/User.js";
 import { extractResumeData } from "../utils/resumeParser.js";
 import { generateLatexResume } from "../utils/latexTemplate.js";
+import { analyzeResume as analyzeResumeAI } from "../utils/gemini.js";
 
 const mapParsedToLatexData = (parsed) => {
   const skillsArray = Array.isArray(parsed.skills) ? parsed.skills : [];
@@ -18,26 +19,26 @@ const mapParsedToLatexData = (parsed) => {
 
   const experience = experienceText
     ? [
-        {
-          company: "Work Experience",
-          duration: "",
-          position: "",
-          location: "",
-          achievements: splitBullets(experienceText),
-        },
-      ]
+      {
+        company: "Work Experience",
+        duration: "",
+        position: "",
+        location: "",
+        achievements: splitBullets(experienceText),
+      },
+    ]
     : [];
 
   const education = educationText
     ? [
-        {
-          institution: educationText,
-          duration: "",
-          degree: "",
-          cgpa: "",
-          coursework: "",
-        },
-      ]
+      {
+        institution: educationText,
+        duration: "",
+        degree: "",
+        cgpa: "",
+        coursework: "",
+      },
+    ]
     : [];
 
   const skills = skillsArray.length ? { skills: skillsArray.join(", ") } : {};
@@ -82,6 +83,7 @@ export const uploadResume = async (req, res) => {
         mimeType: req.file.mimetype,
       });
     } catch (err) {
+      console.error("Resume parsing error:", err);
       resumeParsed = {};
     }
 
@@ -101,6 +103,7 @@ export const uploadResume = async (req, res) => {
       { resume, resumeParsed },
       { new: true }
     ).select("-password");
+    console.log("Upload controller - Updated User resumeParsed rawText length:", user.resumeParsed?.rawText ? user.resumeParsed.rawText.length : "MISSING");
 
     return res.status(200).json({
       message: "Resume uploaded",
@@ -110,6 +113,31 @@ export const uploadResume = async (req, res) => {
       latexFile: `/uploads/${latexFilename}`,
     });
   } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+export const analyzeResume = async (req, res) => {
+  try {
+    const { role, jobDescription, resumeText } = req.body;
+    const user = await User.findById(req.user.id);
+
+    if (!role || (!resumeText && (!user || !user.resumeParsed))) {
+      return res.status(400).json({
+        message: "Role and Resume data (text or uploaded file) are required"
+      });
+    }
+
+    const textToAnalyze = resumeText || (user.resumeParsed ? user.resumeParsed.rawText : "");
+    console.log("Analyze controller - User found:", !!user);
+    console.log("Analyze controller - Parsed exist:", !!user?.resumeParsed);
+    console.log("Analyze controller - rawText length:", textToAnalyze ? textToAnalyze.length : "EMPTY");
+
+    const analysis = await analyzeResumeAI(role, jobDescription, textToAnalyze);
+
+    return res.status(200).json(analysis);
+  } catch (error) {
+    console.error("Analysis Error:", error);
     return res.status(500).json({ message: error.message });
   }
 };

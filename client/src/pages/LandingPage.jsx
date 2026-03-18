@@ -219,18 +219,19 @@ const Pricing = () => {
                   </p>
                   <div className="flex items-baseline gap-1 mb-2">
                     <span className="text-4xl font-black text-white">
-                      {p.name === "Free" || !currency || rate === null
+                      {!currency || rate === null
                         ? p.price
                         : new Intl.NumberFormat(undefined, {
-                            style: "currency",
-                            currency,
-                          }).format(
-                            p.name === "Basic"
-                              ? 2.99 * rate
-                              : p.name === "Pro"
+                          style: "currency",
+                          currency,
+                          minimumFractionDigits: 0,
+                        }).format(
+                          p.name === "Basic"
+                            ? 2.99 * rate
+                            : p.name === "Pro"
                               ? 6.99 * rate
                               : 0
-                          )}
+                        )}
                     </span>
                     <span className="text-sm" style={{ color: "#475569" }}>
                       {p.period}

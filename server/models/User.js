@@ -26,12 +26,13 @@ const userSchema = new mongoose.Schema(
       skills: [String],
       experience: String,
       education: String,
+      rawText: String,
       atsScore: {
         score: Number,
         issues: Number,
         content: Number,
         sections: Number,
-        essentials: Number,                                                      
+        essentials: Number,
         formatting: Number,
         tailoring: Number,
         breakdown: {

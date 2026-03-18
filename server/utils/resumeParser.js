@@ -1,9 +1,11 @@
+import { createRequire } from "module";
+const require = createRequire(import.meta.url);
+const pdfParse = require("pdf-parse");
 import fs from "fs";
-import pdfParse from "pdf-parse";
 import mammoth from "mammoth";
 import nlp from "compromise";
 import Tesseract from "tesseract.js";
- 
+
 
 const SECTION_ALIASES = {
   experience: [
@@ -66,6 +68,22 @@ const normalizeText = (text) =>
     .replace(/\r?\n{3,}/g, "\n\n")
     .trim();
 
+const extractName = (text) => {
+  const lines = text.split("\n").filter((l) => l.trim().length > 0);
+  if (lines.length === 0) return "Anonymous";
+  return lines[0].trim().substring(0, 50);
+};
+
+const extractEmail = (text) => {
+  const match = text.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/);
+  return match ? match[0] : "";
+};
+
+const extractPhone = (text) => {
+  const match = text.match(/(\+?\d{1,3}[-.\s]?)?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}/);
+  return match ? match[0] : "";
+};
+
 const buildSectionIndex = (text) => {
   const lower = text.toLowerCase();
   const headings = Object.values(SECTION_ALIASES).flat();
@@ -88,67 +106,22 @@ const extractSection = (text, sectionKey) => {
   const current = matches.find((m) => aliases.includes(m.heading));
   if (!current) return "";
 
-  const currentIdx = matches.indexOf(current);
+  const idx = matches.indexOf(current);
   const start = current.index + current.heading.length;
-  
-  const corpus = section || text;
-  const lower = corpus.toLowerCase();
+  const end = idx < matches.length - 1 ? matches[idx + 1].index : text.length;
 
+  return text.substring(start, end).trim();
+};
+
+const extractSkills = (text) => {
+  const lower = text.toLowerCase();
   const found = new Set();
   for (const skill of SKILL_KEYWORDS) {
     if (lower.includes(skill)) {
       found.add(skill);
     }
   }
-
-  const doc = nlp(corpus);
-  const entities = doc
-    .match("#Technology+")
-    .out("array")
-    .map((s) => s.toLowerCase().trim());
-  for (const entity of entities) {
-    if (entity.length > 1) {
-      found.add(entity);
-    }
-  }
-
-  const normalizeSkill = (skill) => {
-    const s = skill.trim().toLowerCase();
-    if (!s) return "";
-    if (s === "node" || s === "node.js" || s === "nodejs") return "Node.js";
-    if (s === "react") return "React";
-    if (s === "python") return "Python";
-    if (s === "javascript" || s === "js") return "JavaScript";
-    if (s === "typescript" || s === "ts") return "TypeScript";
-    if (s === "html") return "HTML";
-    if (s === "css") return "CSS";
-    if (s === "aws") return "AWS";
-    if (s === "gcp") return "GCP";
-    if (s === "mongodb") return "MongoDB";
-    if (s === "postgresql" || s === "postgres") return "PostgreSQL";
-    if (s === "mysql") return "MySQL";
-    if (s === "sql") return "SQL";
-    if (s === "git") return "Git";
-    if (s === "linux") return "Linux";
-    if (s === "django") return "Django";
-    if (s === "flask") return "Flask";
-    if (s === "express") return "Express";
-    if (s === "rest" || s === "rest api" || s === "apis" || s === "api")
-      return "REST APIs";
-    if (s === "ml" || s === "machine learning") return "Machine Learning";
-    if (s === "scikit-learn" || s === "sklearn") return "Scikit-learn";
-    if (s === "numpy") return "NumPy";
-    if (s === "pandas") return "Pandas";
-    if (s === "c") return "C";
-    if (s === "java") return "Java";
-    if (s === "go") return "Go";
-    return s.length <= 24 ? s.charAt(0).toUpperCase() + s.slice(1) : "";
-  };
-
-  const normalized = Array.from(found).map(normalizeSkill).filter(Boolean);
-
-  const unique = Array.from(new Set(normalized));
-  return unique.slice(0, 40);
+  return Array.from(found).slice(0, 30);
 };
 
 const extractExperience = (text) => {
@@ -298,7 +271,7 @@ const computeAtsScore = ({
         (contentIssues.repetition ? 10 : 20) +
         (contentIssues.spellingGrammar ? 10 : 20) +
         Math.min(actionVerbScore, 10)) *
-        1,
+      1,
     ),
   );
 
@@ -321,9 +294,9 @@ const computeAtsScore = ({
       100,
       Math.round(
         contentScore * 0.3 +
-          sectionsScore * 0.2 +
-          essentialsScore * 0.35 +
-          formattingScore * 0.15,
+        sectionsScore * 0.2 +
+        essentialsScore * 0.35 +
+        formattingScore * 0.15,
       ),
     ),
     issues,
@@ -347,38 +320,44 @@ const computeAtsScore = ({
 };
 
 
-import { getCodeFeedback } from "./gemini.js";
 export const extractResumeData = async ({ filePath, mimeType }) => {
+  const debugLog = (msg) => {
+    fs.appendFileSync("debug_parser.log", `[${new Date().toISOString()}] ${msg}\n`);
+  };
+
   let rawText = "";
-  if (mimeType === "application/pdf") {
+  debugLog(`Starting extraction for ${filePath} (${mimeType})`);
+
+  const isPdf = mimeType === "application/pdf" || filePath.toLowerCase().endsWith(".pdf");
+  const isDocx = mimeType === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" || filePath.toLowerCase().endsWith(".docx");
+  const isText = mimeType.startsWith("text/") || filePath.toLowerCase().endsWith(".txt") || filePath.toLowerCase().endsWith(".tex");
+  const isImage = mimeType.startsWith("image/");
+
+  if (isPdf) {
     const buffer = fs.readFileSync(filePath);
-    const data = await pdfParse(buffer);
-    rawText = data.text || "";
-  } else if (
-    mimeType ===
-    "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-  ) {
+    try {
+      const data = await pdfParse(buffer);
+      rawText = data.text || "";
+      debugLog(`PDF parsed, length: ${rawText.length}`);
+    } catch (err) {
+      debugLog(`PDF error: ${err.message}`);
+      rawText = "";
+    }
+  } else if (isDocx) {
     const result = await mammoth.extractRawText({ path: filePath });
     rawText = result.value || "";
-  } else if (
-    mimeType === "image/jpeg" ||
-    mimeType === "image/png" ||
-    mimeType === "image/jpg" ||
-    mimeType === "image/bmp" ||
-    mimeType === "image/gif" ||
-    mimeType === "image/webp" ||
-    mimeType === "image/tiff"
-  ) {
-
-    const {
-      data: { text },
-    } = await Tesseract.recognize(filePath, "eng");
+    debugLog(`DOCX parsed, length: ${rawText.length}`);
+  } else if (isText) {
+    rawText = fs.readFileSync(filePath, "utf-8");
+    debugLog(`Text file parsed, length: ${rawText.length}`);
+  } else if (isImage) {
+    const { data: { text } } = await Tesseract.recognize(filePath, "eng");
     rawText = text || "";
-  } else {
-    rawText = "";
+    debugLog(`OCR parsed, length: ${rawText.length}`);
   }
 
   const normalized = normalizeText(rawText);
+  debugLog(`Normalized length: ${normalized.length}`);
   const parsed = {
     name: extractName(normalized),
     email: extractEmail(normalized),
@@ -388,45 +367,12 @@ export const extractResumeData = async ({ filePath, mimeType }) => {
     education: extractEducation(normalized),
   };
 
-  
-  let geminiFeedback = "";
-  let geminiScore = null;
-  let algoScore = computeAtsScore({ ...parsed, rawText: normalized }).score;
-  try {
-    
-    const prompt = `You are an expert ATS resume reviewer. Carefully analyze the resume below and provide:
-1. A realistic ATS score (0-100) based on section coverage, skills, formatting, and overall quality.
-2. Actionable feedback for improvement.
-3. Brief reasoning for the score.
-Resume:
-${normalized}
 
-Respond ONLY in this format:
-ATS Score: <number>
-Reason: <short reasoning>
-Feedback: <suggestions>`;
-    geminiFeedback = await getCodeFeedback(prompt, "resume");
-    
-    const scoreMatch = geminiFeedback.match(/ATS Score\s*[:\-]?\s*(\d{1,3})/i);
-    if (scoreMatch) {
-      geminiScore = Math.max(0, Math.min(100, parseInt(scoreMatch[1])));
-    }
-  } catch (err) {
-    geminiFeedback = "Gemini feedback unavailable.";
-  }
-
-  
-  let finalScore;
-  if (geminiScore !== null) {
-    
-    finalScore = Math.round(geminiScore * 0.6 + algoScore * 0.4);
-  } else {
-    finalScore = algoScore;
-  }
+  let finalScore = computeAtsScore({ ...parsed, rawText: normalized }).score;
 
   return {
     ...parsed,
     atsScore: finalScore,
-    geminiFeedback,
+    rawText: normalized,
   };
 };

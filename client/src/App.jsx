@@ -9,6 +9,7 @@ import TemplatesSection from "./components/sections/TemplatesSection";
 import FAQ from "./components/FAQ/FAQ";
 import MyResumes from "./pages/MyResumes";
 import Settings from "./pages/Settings";
+import ResumeAnalyzer from "./pages/ResumeAnalyzer";
 import OAuthCallback from "./pages/OAuthCallback";
 
 function App() {
@@ -18,9 +19,10 @@ function App() {
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<SignUpPage />} />
       <Route path="/dashboard" element={<DashboardPage />} />
+      <Route path="/resume-analyzer" element={<ResumeAnalyzer />} />
       <Route path="/templates" element={<TemplatesSection />} />
       <Route path="/faq" element={<FAQ />} />
-      <Route path="/templates" element={<AllTemplates />} />
+      <Route path="/templates/all" element={<AllTemplates />} />
       <Route path="/templates" element={<TemplatesPage />} />
       <Route path="/templates/:category" element={<TemplatesPage />} />
       <Route path="/my-resumes" element={<MyResumes />} />

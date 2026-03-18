@@ -3,7 +3,7 @@ import fs from "fs";
 import path from "path";
 import multer from "multer";
 import { protect } from "../middleware/auth.middleware.js";
-import { uploadResume } from "../controllers/resume.controller.js";
+import { uploadResume, analyzeResume } from "../controllers/resume.controller.js";
 
 const router = express.Router();
 
@@ -38,5 +38,6 @@ const fileFilter = (req, file, cb) => {
 const upload = multer({ storage, fileFilter, limits: { fileSize: 5 * 1024 * 1024 } });
 
 router.post("/upload", protect, upload.single("resume"), uploadResume);
+router.post("/analyze", protect, analyzeResume);
 
 export default router;
