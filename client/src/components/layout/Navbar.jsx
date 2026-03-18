@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 
 const nav = [
+  
   { title: "Features", path: "#features" },
   { title: "How It Works", path: "#how" },
   { title: "Templates", path: "#templates" },
@@ -31,6 +32,7 @@ const Navbar = () => {
       }}
     >
       <nav className="max-w-7xl mx-auto px-6 md:px-12 flex items-center justify-between py-4">
+        
         <Link to="/" className="flex items-center gap-2.5">
           <div
             className="w-8 h-8 rounded-xl flex items-center justify-center shadow-lg"
@@ -61,10 +63,20 @@ const Navbar = () => {
             <li key={item.title}>
               <a
                 href={item.path}
-                className="text-sm font-semibold transition-colors duration-200"
-                style={{ color: "#94a3b8" }}
-                onMouseEnter={(e) => (e.target.style.color = "#f1f5f9")}
-                onMouseLeave={(e) => (e.target.style.color = "#94a3b8")}
+                 className="relative inline-block text-sm font-semibold text-slate-400 
+             
+             before:content-[''] before:absolute before:w-full before:h-[2px] 
+             before:bg-gradient-to-r before:from-blue-500 before:to-white
+             before:top-[-4px] before:left-0 before:scale-x-0 before:origin-left 
+             before:transition-transform before:duration-300
+
+             after:content-[''] after:absolute after:w-full after:h-[2px] 
+             after:bg-gradient-to-r after:from-blue-500 after:to-white 
+             after:bottom-[-4px] after:left-0 after:scale-x-0 after:origin-right 
+             after:transition-transform after:duration-300
+
+             hover:text-slate-100 
+             hover:before:scale-x-100 hover:after:scale-x-100"
               >
                 {item.title}
               </a>
@@ -83,21 +95,43 @@ const Navbar = () => {
             Log in
           </Link>
           <Link
-            to="/signup"
-            className="relative group px-5 py-2.5 rounded-xl font-black text-sm text-white overflow-hidden"
-            style={{
-              background: "linear-gradient(135deg, #1d4ed8, #2563eb)",
-              boxShadow: "0 0 24px rgba(37,99,235,0.3)",
-            }}
-          >
-            <div
-              className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity rounded-xl"
-              style={{
-                background: "linear-gradient(135deg, #2563eb, #3b82f6)",
-              }}
-            />
-            <span className="relative z-10">Get Started Free</span>
-          </Link>
+  to="/signup"
+  className="relative group inline-block rounded-xl overflow-hidden text-sm font-black uppercase tracking-wide leading-[44px]"
+>
+  {/* FRONT */}
+  <span
+    className="absolute inset-0 flex items-center justify-center px-5 
+               text-white transition-all duration-500
+               [transform:translateY(0)_rotateX(0deg)]
+               group-hover:[transform:translateY(50%)_rotateX(90deg)]
+               rounded-xl"
+    style={{
+      background: "linear-gradient(135deg, #1d4ed8, #2563eb)",
+      boxShadow: "0 0 24px rgba(37,99,235,0.3)",
+    }}
+  >
+    Get Started Free
+  </span>
+
+  {/* BACK */}
+  <span
+    className="absolute inset-0 flex items-center justify-center px-5 
+               text-[#1e293b] transition-all duration-500
+               opacity-0
+               [transform:translateY(-50%)_rotateX(90deg)]
+               group-hover:opacity-100
+               group-hover:[transform:translateY(0)_rotateX(0deg)]
+               rounded-xl"
+    style={{
+      background: "linear-gradient(135deg, #3b82f6, #60a5fa)",
+    }}
+  >
+    Sign Up Now
+  </span>
+
+  {/* Spacer (keeps size stable) */}
+  <span className="opacity-0 px-5">Get Started Free</span>
+</Link>
         </div>
 
         {/* Mobile toggle */}

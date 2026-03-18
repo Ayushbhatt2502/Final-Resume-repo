@@ -15,6 +15,17 @@ const loadRazorpayScript = () =>
   });
 
 const PLAN_INFO = {
+  free: {
+    name: "free",
+    price: 0,
+    period: "/month",
+    color: "#3b82f6",
+    gradient: "linear-gradient(135deg, #1d4ed8, #2563eb)",
+    glow: "rgba(37,99,235,0.3)",
+    features: [
+      "Resume upload & instant ATS score","AI keyword detection overview","Structural resume analysis","Section-by-section grade summary",
+    ],
+  },
   basic: {
     name: "Basic",
     price: 2.99,

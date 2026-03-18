@@ -3,9 +3,6 @@ import { motion, AnimatePresence } from "framer-motion";
 
 const faqData = [
   { id: 1, q: "What is an ATS-friendly resume?", a: "An ATS-friendly resume is structured so that automated screening software can read and rank it correctly. Without this, your application may never reach a human recruiter — no matter how qualified you are." },
-  { id: 2, q: "What does the Free plan include?", a: "Free users get a complete ATS compatibility score, an AI keyword detection overview, structural analysis across every section, and a grade summary — enough to understand where you stand before committing." },
-  { id: 3, q: "What does Basic ($2.99/mo) unlock?", a: "Basic unlocks your complete color-coded AI feedback report, one ATS-optimized resume download per month, and one AI-generated cover letter per month. Cancel anytime." },
-  { id: 4, q: "What does Pro ($6.99/mo) include?", a: "Pro gives you everything in Basic without limits, plus job description match scoring, unlimited resume versions, AI interview prep questions, LinkedIn optimization tips, and priority support." },
   { id: 5, q: "What resume formats work best with ATS?", a: "Simple layouts, standard fonts, and clear section headings. Chronological resumes work best because they follow a logical flow that ATS systems can parse reliably. All ATSify templates are pre-optimized for this." },
   { id: 6, q: "Does an ATS-optimized resume still look good to humans?", a: "Absolutely. All of ATSify's templates are both machine-readable and visually polished. Passing the ATS filter and impressing a human recruiter are not mutually exclusive." },
 ];

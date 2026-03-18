@@ -47,10 +47,15 @@ const CTA = () => {
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity" style={{ background:"linear-gradient(135deg, #2563eb, #3b82f6)" }} />
                 <span className="relative z-10">Get Started for Free</span>
               </button>
-              <button onClick={() => navigate("/signup")} className="px-10 py-4 rounded-2xl font-black text-base text-white transition-all hover:brightness-110"
-                style={{ border:"1px solid rgba(255,255,255,0.1)", background:"rgba(255,255,255,0.04)" }}>
-                See Pricing
-              </button>
+             
+                <button onClick={()=>{
+                  const section=document.getElementById("pricing");
+                  if(section) section.scrollIntoView({ behavior:"smooth" });}}
+                  className="px-10 py-4 rounded-2xl font-black text-base text-white transition-all hover:brightness-110"
+                  style={{ border:"1px solid rgba(255,255,255,0.1)", background:"rgba(255,255,255,0.04)" }}>
+                  See Pricing
+                </button>
+              
             </div>
 
             <div className="pt-8" style={{ borderTop:"1px solid rgba(255,255,255,0.05)" }}>
