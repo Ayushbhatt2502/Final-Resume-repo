@@ -38,3 +38,7 @@
   animation: gradient-x 4s ease infinite;
 }
 .animate-float { animation: float 5s ease-in-out infinite; }
+
+body {
+  cursor: none;
+}

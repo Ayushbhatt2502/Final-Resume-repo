@@ -60,40 +60,51 @@ const Navbar = () => {
 
         <ul className="hidden md:flex items-center gap-8">
           {nav.map((item) => (
-            <li key={item.title}>
-              <a
-                href={item.path}
-                 className="relative inline-block text-sm font-semibold text-slate-400 
-             
-             before:content-[''] before:absolute before:w-full before:h-[2px] 
-             before:bg-gradient-to-r before:from-blue-500 before:to-white
-             before:top-[-4px] before:left-0 before:scale-x-0 before:origin-left 
-             before:transition-transform before:duration-300
+  <li key={item.title}>
+    <a
+      href={item.path}
+      className={`relative inline-block text-sm font-semibold transition-all duration-300
+      
+      /* LINE EFFECT (for all) */
+      before:content-[''] before:absolute before:w-full before:h-[2px] 
+      before:bg-gradient-to-r before:from-blue-500 before:to-white
+      before:top-[-4px] before:left-0 before:scale-x-0 before:origin-left 
+      before:transition-transform before:duration-300
 
-             after:content-[''] after:absolute after:w-full after:h-[2px] 
-             after:bg-gradient-to-r after:from-blue-500 after:to-white 
-             after:bottom-[-4px] after:left-0 after:scale-x-0 after:origin-right 
-             after:transition-transform after:duration-300
+      after:content-[''] after:absolute after:w-full after:h-[2px] 
+      after:bg-gradient-to-r after:from-blue-500 after:to-white 
+      after:bottom-[-4px] after:left-0 after:scale-x-0 after:origin-right 
+      after:transition-transform after:duration-300
 
-             hover:text-slate-100 
-             hover:before:scale-x-100 hover:after:scale-x-100"
-              >
-                {item.title}
-              </a>
-            </li>
-          ))}
+      hover:before:scale-x-100 hover:after:scale-x-100
+
+      ${
+        item.title === "How It Works"
+          ? `cursor-help text-slate-300
+             hover:text-white
+             hover:shadow-[0_0_12px_rgba(0,188,212,0.4)]`
+          : `text-slate-400 hover:text-slate-100`
+      }`}
+    >
+      {item.title}
+    </a>
+  </li>
+))}
         </ul>
 
         <div className="hidden md:flex items-center gap-3">
           <Link
-            to="/login"
-            className="text-sm font-bold px-4 py-2 transition-colors"
-            style={{ color: "#94a3b8" }}
-            onMouseEnter={(e) => (e.target.style.color = "#f1f5f9")}
-            onMouseLeave={(e) => (e.target.style.color = "#94a3b8")}
-          >
-            Log in
-          </Link>
+  to="/login"
+  className="text-sm font-bold px-4 py-2 transition-all duration-300
+             text-slate-400
+             
+             hover:text-transparent
+             hover:bg-clip-text
+             hover:bg-gradient-to-r
+             hover:from-cyan-300 hover:via-white hover:to-cyan-300"
+>
+  Log in
+</Link>
           <Link
   to="/signup"
   className="relative group inline-block rounded-xl overflow-hidden text-sm font-black uppercase tracking-wide leading-[44px]"

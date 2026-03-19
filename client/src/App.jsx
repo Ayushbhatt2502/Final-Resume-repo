@@ -11,9 +11,15 @@ import MyResumes from "./pages/MyResumes";
 import Settings from "./pages/Settings";
 import ResumeAnalyzer from "./pages/ResumeAnalyzer";
 import OAuthCallback from "./pages/OAuthCallback";
+import CustomCursor from "./components/CustomCursor";
+import FallingResumes from "./components/FallingResumes";
 
 function App() {
   return (
+    <>
+      <FallingResumes /> 
+     <CustomCursor />
+     <div className="relative z-10">
     <Routes>
       <Route path="/" element={<LandingPage />} />
       <Route path="/login" element={<Login />} />
@@ -29,6 +35,8 @@ function App() {
       <Route path="/settings" element={<Settings />} />
       <Route path="/oauth-callback" element={<OAuthCallback />} />
     </Routes>
+    </div>
+    </>
   );
 }
 
