@@ -1,38 +1,50 @@
-import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
+import r1 from "../assets/res1.jpg";
+import r2 from "../assets/res2.jpg";
+import r3 from "../assets/res3.jpg";
+import r4 from "../assets/res4.jpg";
+import r5 from "../assets/res5.jpg";
+import r6 from "../assets/res6.webp";
 
-const resumes = Array.from({ length: 15 });
+const images = [r1, r2, r3, r4, r5, r6];
 
-const FallingResumes = () => {
+const FallingResumes = ({ count = 20 }) => {
+  const [items, setItems] = useState([]);
+
+  useEffect(() => {
+    const arr = Array.from({ length: count }).map((_, i) => ({
+      id: i,
+      left: Math.random() * 100,
+      duration: 6 + Math.random() * 6,
+      delay: Math.random() * 5,
+      scale: 0.6 + Math.random() * 0.6,
+      rotation: Math.random() * 360,
+      img: images[Math.floor(Math.random() * images.length)],
+    }));
+
+    setItems(arr);
+  }, [count]);
+
   return (
-    <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
-      {resumes.map((_, i) => {
-        const left = Math.random() * 100;
-        const duration = 6 + Math.random() * 6;
-        const delay = Math.random() * 5;
-        const rotate = Math.random() * 30 - 15;
-
-        return (
-          <motion.div
-            key={i}
-            initial={{ y: "-10%", x: `${left}vw`, rotate }}
-            animate={{ y: "110vh" }}
-            transition={{
-              duration,
-              repeat: Infinity,
-              delay,
-              ease: "linear",
-            }}
-            className="absolute w-16 h-24 bg-white/10 border border-white/20 rounded-md"
-          >
-            <div className="p-2 space-y-1">
-              <div className="h-1 bg-white/30 w-3/4 rounded" />
-              <div className="h-1 bg-white/30 w-full rounded" />
-              <div className="h-1 bg-white/30 w-5/6 rounded" />
-              <div className="h-1 bg-white/30 w-2/3 rounded" />
-            </div>
-          </motion.div>
-        );
-      })}
+    <div className="fixed inset-0 overflow-hidden pointer-events-none z-10">
+      {items.map((item) => (
+        <div
+        key={item.id}
+        className="absolute animate-fall"
+        style={{
+        left: `${item.left}%`,
+        animationDuration: `${item.duration}s`,
+        animationDelay: `${item.delay}s`,
+        transform: `scale(${item.scale}) rotate(${item.rotation}deg)`,
+  }}
+>
+  <img
+  src={item.img}
+    alt="resume"
+    className="w-20 opacity-80 drop-shadow-lg rounded-md"
+  />
+</div>
+      ))}
     </div>
   );
 };

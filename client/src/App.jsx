@@ -13,11 +13,13 @@ import ResumeAnalyzer from "./pages/ResumeAnalyzer";
 import OAuthCallback from "./pages/OAuthCallback";
 import CustomCursor from "./components/CustomCursor";
 import FallingResumes from "./components/FallingResumes";
+import { useLocation } from "react-router-dom";
 
 function App() {
+  const location = useLocation();
+  const isHome = location.pathname === "/";
   return (
     <>
-      <FallingResumes /> 
      <CustomCursor />
      <div className="relative z-10">
     <Routes>

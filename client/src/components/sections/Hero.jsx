@@ -24,36 +24,24 @@ const TypeWriter = () => {
   }, [text, del, idx]);
   return (
     <span className="relative">
-      <span style={{ color: "#3b82f6" }}>{text}</span>
-      <span className="animate-pulse ml-0.5" style={{ color: "#3b82f6" }}>|</span>
+      <span style={{ color: "#009dff" }}>{text}</span>
+      <span className="animate-pulse ml-0.5" style={{ color: "#f2f6fd" }}>|</span>
     </span>
   );
 };
 
-const DOTS = Array.from({ length: 22 }, (_, i) => ({
-  id: i, x: Math.random() * 100, y: Math.random() * 100,
-  s: Math.random() * 2.5 + 1, d: Math.random() * 7 + 5, dl: Math.random() * 3,
-}));
-
 const Hero = () => {
   const navigate = useNavigate();
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden" style={{ background: "#07080c" }}>
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden" style={{ background: "transparent" }}>
       {/* Ambient lights */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <div className="absolute top-[-10%] left-[20%] w-175 h-125 rounded-full opacity-30"
           style={{ background: "radial-gradient(ellipse, rgba(37,99,235,0.25) 0%, transparent 70%)" }} />
         <div className="absolute bottom-[-5%] right-[15%] w-125 h-100 rounded-full opacity-20"
           style={{ background: "radial-gradient(ellipse, rgba(245,158,11,0.2) 0%, transparent 70%)" }} />
-        {/* Fine grid */}
-        <div className="absolute inset-0 opacity-[0.03]"
-          style={{ backgroundImage: "linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px)", backgroundSize: "48px 48px" }} />
-        {/* Scattered dots */}
-        {DOTS.map(p => (
-          <motion.div key={p.id} className="absolute rounded-full" style={{ left: `${p.x}%`, top: `${p.y}%`, width: p.s, height: p.s, background: "rgba(59,130,246,0.4)" }}
-            animate={{ opacity: [0.1, 0.45, 0.1], scale: [1, 1.6, 1] }}
-            transition={{ duration: p.d, delay: p.dl, repeat: Infinity }} />
-        ))}
+      
+        
       </div>
 
       {/* Floating insight cards */}

@@ -10,6 +10,7 @@ import Footer from "../components/layout/Footer";
 import TemplatesSection from "../components/sections/TemplatesSection";
 import FAQ from "../components/FAQ/FAQ";
 import PaymentModal from "../components/PaymentModal";
+import FallingResumes from "../components/FallingResumes";
 
 const Pricing = () => {
   const navigate = useNavigate();
@@ -138,7 +139,7 @@ const Pricing = () => {
     <section
       id="pricing"
       className="py-32 px-6 relative overflow-hidden"
-      style={{ background: "#07080c" }}
+      style={{ background: "transparent" }}
     >
       <div
         className="absolute top-0 left-1/2 -translate-x-1/2 w-175 h-75 pointer-events-none rounded-full opacity-15"
@@ -315,7 +316,13 @@ const Pricing = () => {
 };
 
 const LandingPage = () => (
-  <div style={{ background: "#07080c" }} className="min-h-screen text-white">
+  <div className="relative min-h-screen text-white" style={{ background: "#07080c" }}>
+    
+    {/* Falling resumes layer */}
+    <FallingResumes />
+
+    {/* Content */}
+    <div className="relative z-20">
     <Navbar />
     <Hero />
     <Features />
@@ -325,6 +332,7 @@ const LandingPage = () => (
     <FAQ />
     <CTA />
     <Footer />
+    </div>
   </div>
 );
 export default LandingPage;

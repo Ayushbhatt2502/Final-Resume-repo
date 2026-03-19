@@ -117,7 +117,7 @@ const Navbar = () => {
                group-hover:[transform:translateY(50%)_rotateX(90deg)]
                rounded-xl"
     style={{
-      background: "linear-gradient(135deg, #1d4ed8, #2563eb)",
+      background: "linear-gradient(135deg, #00bbff, #0437a4)",
       boxShadow: "0 0 24px rgba(37,99,235,0.3)",
     }}
   >
@@ -127,17 +127,26 @@ const Navbar = () => {
   {/* BACK */}
   <span
     className="absolute inset-0 flex items-center justify-center px-5 
-               text-[#1e293b] transition-all duration-500
+               text-black transition-all duration-500
                opacity-0
                [transform:translateY(-50%)_rotateX(90deg)]
                group-hover:opacity-100
                group-hover:[transform:translateY(0)_rotateX(0deg)]
-               rounded-xl"
+               rounded-xl
+               "
     style={{
-      background: "linear-gradient(135deg, #3b82f6, #60a5fa)",
+      background: "linear-gradient(135deg, #66b0f6, #3212e8)",
+    }}
+  >
+    <span
+    className="font-black"
+    style={{
+      color: "#000",
+      textShadow: "0 0 8px rgba(59,130,246,0.9), 0 0 16px rgba(59,130,246,0.7)"
     }}
   >
     Sign Up Now
+    </span>
   </span>
 
   {/* Spacer (keeps size stable) */}
