@@ -17,7 +17,7 @@ const FallingResumes = ({ count = 20 }) => {
       left: Math.random() * 100,
       duration: 6 + Math.random() * 6,
       delay: Math.random() * 5,
-      scale: 0.6 + Math.random() * 0.6,
+      size: 55 + Math.random() * 35,
       rotation: Math.random() * 360,
       img: images[Math.floor(Math.random() * images.length)],
     }));
@@ -35,14 +35,17 @@ const FallingResumes = ({ count = 20 }) => {
         left: `${item.left}%`,
         animationDuration: `${item.duration}s`,
         animationDelay: `${item.delay}s`,
-        transform: `scale(${item.scale}) rotate(${item.rotation}deg)`,
+        transform: `rotate(${item.rotation}deg)`
   }}
 >
   <img
   src={item.img}
-    alt="resume"
-    className="w-20 opacity-80 drop-shadow-lg rounded-md"
-  />
+  alt="resume"
+  className="opacity-80 drop-shadow-lg rounded-md"
+ style={{
+  width: `${item.size}px`
+}}
+/>
 </div>
       ))}
     </div>

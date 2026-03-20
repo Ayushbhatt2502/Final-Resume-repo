@@ -28,31 +28,89 @@ const HowItWorks = () => (
         </p>
       </motion.div>
 
-      <div className="grid md:grid-cols-2 gap-5">
-        {steps.map((s, i) => (
-          <motion.div key={i} initial={{ opacity: 0, y: 28 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.11 }}
-            className="group relative p-8 rounded-2xl overflow-hidden transition-all duration-300"
-            style={{ background: "#07080c", border: "1px solid rgba(255,255,255,0.06)" }}
-            onMouseEnter={e => e.currentTarget.style.borderColor = "rgba(59,130,246,0.15)"}
-            onMouseLeave={e => e.currentTarget.style.borderColor = "rgba(255,255,255,0.06)"}>
-            <div className="absolute -top-6 -right-6 w-28 h-28 rounded-full opacity-10 transition-opacity duration-300 group-hover:opacity-20"
-              style={{ background: `radial-gradient(circle, ${s.accent}, transparent)` }} />
-            <div className="flex items-start gap-5">
-              <div className="flex-shrink-0 w-14 h-14 rounded-2xl flex items-center justify-center text-2xl"
-                style={{ background: `rgba(37,99,235,0.1)`, border: `1px solid ${s.accent}30` }}>
-                {s.icon}
-              </div>
-              <div>
-                <div className="flex items-center gap-3 mb-2">
-                  <span className="text-[10px] font-black tracking-widest" style={{ color: "#334155" }}>{s.num}</span>
-                  <h3 className="text-xl font-black text-white tracking-tight">{s.title}</h3>
-                </div>
-                <p className="text-sm leading-relaxed font-medium" style={{ color: "#64748b" }}>{s.desc}</p>
-              </div>
-            </div>
-          </motion.div>
-        ))}
-      </div>
+      <div className="relative w-full h-[550px] flex items-center justify-center">
+
+  {/* LEFT HEADING */}
+  <div className="absolute left-10 max-w-sm text-left z-10">
+    <h2 className="text-4xl font-black text-white leading-tight">
+      From upload to <br />
+      <span className="text-amber-400">offer letter.</span>
+    </h2>
+    <p className="mt-4 text-sm text-slate-400">
+      We've collapsed ATS optimization into a process that takes under 5 minutes.
+    </p>
+  </div>
+
+  {/* 🌙 SVG GLOW PATH */}
+  <svg className="absolute w-full h-full pointer-events-none">
+    <defs>
+      <linearGradient id="glowPath" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stopColor="#3b82f6" stopOpacity="0.2" />
+        <stop offset="50%" stopColor="#60a5fa" stopOpacity="0.6" />
+        <stop offset="100%" stopColor="#3b82f6" stopOpacity="0.2" />
+      </linearGradient>
+    </defs>
+
+    <motion.path
+      d="M500,50 Q650,275 500,500"
+      stroke="url(#glowPath)"
+      strokeWidth="3"
+      fill="none"
+      initial={{ pathLength: 0 }}
+      whileInView={{ pathLength: 1 }}
+      transition={{ duration: 2 }}
+      style={{
+        filter: "drop-shadow(0 0 8px rgba(59,130,246,0.5))"
+      }}
+    />
+  </svg>
+
+  {/* 🔥 STEPS ON ARC */}
+  {steps.map((s, i) => {
+    const radius = 750;
+const centerX = 300;
+const centerY = 325;
+const angle = (-150 + i * 100) * (Math.PI / 180);
+
+    const x = centerX + radius * Math.cos(angle);
+    const y = centerY + radius * Math.sin(angle);
+
+    return (
+      <motion.div
+        key={i}
+        initial={{ opacity: 0, scale: 0.8 }}
+        whileInView={{ opacity: 1, scale: 1 }}
+        transition={{ delay: i * 0.25 }}
+        className="absolute w-64 p-5 rounded-xl hover:scale-105 transition-all duration-300"
+        style={{
+          left: x,
+          top: y,
+          transform: "translate(-50%, -50%)",
+          background: "#07080c",
+          border: "1px solid rgba(255,255,255,0.06)",
+          boxShadow: "0 0 0 rgba(0,0,0,0)"
+        }}
+        onMouseEnter={e => {
+          e.currentTarget.style.boxShadow = "0 0 25px rgba(59,130,246,0.15)";
+          e.currentTarget.style.borderColor = "rgba(59,130,246,0.2)";
+        }}
+        onMouseLeave={e => {
+          e.currentTarget.style.boxShadow = "none";
+          e.currentTarget.style.borderColor = "rgba(255,255,255,0.06)";
+        }}
+      >
+        <div className="flex items-start gap-3">
+          <div className="text-xl">{s.icon}</div>
+          <div>
+            <div className="text-[10px] text-slate-500">{s.num}</div>
+            <h3 className="text-white font-bold text-sm">{s.title}</h3>
+            <p className="text-xs text-slate-400 mt-1">{s.desc}</p>
+          </div>
+        </div>
+      </motion.div>
+    );
+  })}
+</div>
 
       {/* Terminal */}
       <motion.div initial={{ opacity: 0, y: 28 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.3 }}

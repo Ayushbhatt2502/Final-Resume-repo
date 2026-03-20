@@ -104,10 +104,31 @@ const Hero = () => {
           <TypeWriter />
         </motion.h1>
 
-        <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.32 }}
-          className="text-lg md:text-xl max-w-2xl mx-auto mb-12 leading-relaxed font-medium" style={{ color: "#94a3b8" }}>
-          ATSify scans, scores, and rewrites your resume so it passes every filter and lands on a real recruiter's desk.
-        </motion.p>
+        <motion.p
+  initial={{ opacity: 0 }}
+  animate={{ opacity: 1 }}
+  transition={{ delay: 0.32 }}
+  className="text-lg md:text-xl max-w-2xl mx-auto mb-12 leading-relaxed font-medium text-white"
+>
+  <motion.span
+    animate={{
+      textShadow: [
+        "0 0 8px rgba(59,130,246,0.6), 0 0 16px rgba(59,130,246,0.4)",
+        "0 0 18px rgba(59,130,246,1), 0 0 35px rgba(59,130,246,0.9), 0 0 60px rgba(59,130,246,0.7)",
+        "0 0 8px rgba(59,130,246,0.6), 0 0 16px rgba(59,130,246,0.4)"
+      ]
+    }}
+    transition={{
+      duration: 2,
+      repeat: Infinity,
+      ease: "easeInOut"
+    }}
+    className="text-blue-400 font-semibold"
+  >
+    ATSify
+  </motion.span>{" "}
+  scans, scores, and rewrites your resume so it passes every filter and lands on a real recruiter's desk.
+</motion.p>
 
         {/* Stats */}
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.42 }}
@@ -123,21 +144,71 @@ const Hero = () => {
         {/* CTAs */}
         <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.52 }}
           className="flex flex-col sm:flex-row justify-center items-center gap-4">
-          <button onClick={() => navigate("/login")}
-            className="group relative w-full sm:w-auto px-10 py-4 rounded-2xl font-black text-base text-white overflow-hidden"
-            style={{ background: "linear-gradient(135deg, #1d4ed8, #2563eb, #3b82f6)", boxShadow: "0 0 40px rgba(37,99,235,0.35)" }}>
-            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl"
-              style={{ background: "linear-gradient(135deg, #2563eb, #3b82f6)" }} />
-            <span className="relative z-10 flex items-center justify-center gap-2">
-              Analyze My Resume — Free
-              <svg width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path d="M5 12h14m-7-7l7 7-7 7"/></svg>
-            </span>
-          </button>
-          <button onClick={() => navigate("/signup")}
-            className="w-full sm:w-auto px-10 py-4 rounded-2xl font-black text-base text-white transition-all hover:brightness-110"
-            style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)" }}>
-            View Templates
-          </button>
+          <button
+  onClick={() => navigate("/login")}
+  className="group relative w-full sm:w-auto px-10 py-4 rounded-2xl font-black text-base text-white transition-all duration-200"
+  style={{
+    border: "2px solid #3b82f6",
+    boxShadow: "0 0 40px 40px #3b82f6 inset, 0 0 0 0 #3b82f6",
+  }}
+  onMouseEnter={(e) => {
+    e.currentTarget.style.boxShadow =
+      "0 0 10px 0 #3b82f6 inset, 0 0 10px 4px #3b82f6";
+  }}
+  onMouseLeave={(e) => {
+    e.currentTarget.style.boxShadow =
+      "0 0 40px 40px #3b82f6 inset, 0 0 0 0 #3b82f6";
+  }}
+>
+  Analyze My Resume — Free
+</button>
+<div className="flex justify-center">
+          <div className="relative w-[250px] h-[50px] group">
+  
+  {/* Button */}
+  <button
+    onClick={() => navigate("/signup")}
+    className="
+      w-full h-full
+      flex items-center justify-center
+      font-bold uppercase tracking-wide
+      text-white bg-[#333] border-[3px] border-[#333]
+      transition-all duration-300
+      group-hover:w-[200px]
+      group-hover:bg-transparent
+      group-hover:text-blue-500
+      group-hover:border-blue-500
+      group-hover:shadow-[0_0_15px_rgba(59,130,246,0.6)]
+    "
+  >
+    View Templates
+  </button>
+
+  {/* Icon box */}
+  <div
+    className="
+      absolute top-0 right-0
+      w-[50px] h-[50px]
+      flex items-center justify-center
+      rotate-45
+      border-[3px] border-transparent
+      transition-all duration-300
+      group-hover:right-[-1px]
+      group-hover:border-blue-500
+    "
+  >
+    <svg
+      viewBox="0 0 24 24"
+      className="w-5 h-5 -rotate-45 stroke-blue-500"
+      fill="none"
+      strokeWidth="2"
+    >
+      <path d="M5 12h14m-7-7l7 7-7 7" />
+    </svg>
+  </div>
+
+</div>
+</div>
         </motion.div>
 
         {/* Logos */}
